@@ -15,6 +15,7 @@ from Mouser can be purchased from a variety of sources in China.
 [Schematic](https://github.com/schlae/snark-barker/blob/master/SnarkBarker.pdf)
 
 [Bill of Materials](https://github.com/schlae/snark-barker/blob/master/SnarkBarker.csv)
+
 Please note that the 0.1" header pins are *not* listed on the BOM. They are
 standard breakaway headers (both single and double row). Jumper shunts are
 also not listed on the BOM.
@@ -33,7 +34,9 @@ I'd recommend using a high-resolution SLA printer like the Formlabs Form 2.
 
 Fasten it to the potentiometer using an M1.4x0.3mm thread, 6mm long screw
 (McMaster-Carr part number 91800A036 or equivalent).
+
 ![Image of the volume knob](https://github.com/schlae/snark-barker/blob/master/images/vol_knob.png)
+
 [Volume knob STEP model](https://github.com/schlae/snark-barker/blob/master/mech/vol_knob.zip)
 
 ## The ISA Card Bracket
@@ -58,7 +61,7 @@ You may wish to socket the two CMS chips, the 80C51 microcontroller, and the
 two Yamaha chips.
 
 Be sure to add the 4.7K ohm bodge resistor on top of U5, running between
-pins 4 and 14.
+pins 4 and 14. (Shown below.)
 
 ![Photo of bodge resistor](https://github.com/schlae/snark-barker/blob/master/images/bodge.png)
 
