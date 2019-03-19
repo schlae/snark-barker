@@ -39,6 +39,11 @@ Fasten it to the potentiometer using an M1.4x0.3mm thread, 6mm long screw
 
 [Volume knob STEP model](https://github.com/schlae/snark-barker/blob/master/mech/vol_knob.zip)
 
+Update: I've added a modified volume knob that may print better on FDM
+printers.
+
+[Volume knob STEP model, FDM version](https://github.com/schlae/snark-barker/blob/master/mech/vol_knob_fdm.zip)
+
 ## The ISA Card Bracket
 The bracket specified in the BOM is a blank Keystone 9200 bracket. You will
 need to punch or drill holes for the connectors. The KiCad board file has
