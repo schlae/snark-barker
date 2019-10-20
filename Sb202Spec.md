@@ -176,7 +176,7 @@ The above DMA commands check additional bits of the command byte as follows:
 ## Recording Group (0x2)
 | Lower Nibble Bit | Command | Argument | Description
 | ---------------- | ------- | -------- | -----------
-| 3                | Autoinit DMA ADC | None | Starts auto-init DMA playback
+| 3                | Autoinit DMA ADC | None | Starts auto-init DMA recording
 | 2                | DMA ADC | Length lo, Length hi | Starts regular DMA recording
 | All others       | Direct ADC | None | Immediately reads a sample from the microphone input and returns it as a byte
 
