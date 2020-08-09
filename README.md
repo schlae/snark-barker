@@ -78,6 +78,10 @@ Be sure to place shunts in the jumpers marked DRQ1 and JP1, to enable DMA and
 the joystick, respectively. Also place shunts to configure the I/O address and
 IRQ.
 
+## Testing and Diagnostics
+Test your shiny new card using your favorite PC games, or use the [SBDIAG
+program that I've written](https://github.com/schlae/snark-barker/tree/master/sbdiag).
+
 ## Other Notes
 Like the original SB 1.0, the Snark Barker does not need a -5V rail.
 
