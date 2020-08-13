@@ -109,6 +109,23 @@
 #define ADLIB_OUT       0xC0
 #define ADLIB_WAVE      0xE0
 
+// CMS chip offsets
+#define CMS_DATA1       0x00
+#define CMS_REG1        0x01
+#define CMS_DATA2       0x02
+#define CMS_REG2        0x03
+
+// CMS registers
+#define CMS_AMPL0       0x00
+#define CMS_FREQ0       0x08
+#define CMS_OCT01       0x10
+#define CMS_FE          0x14
+#define CMS_NE          0x15
+#define CMS_NG          0x16
+#define CMS_EG0         0x18
+#define CMS_ENABLE      0x1C
+
+
 // RIFF WAVE file header.
 typedef struct {
         char signature[4];     // 'RIFF'
@@ -1195,6 +1212,120 @@ void menu_midi_loopback()
 }
 
 
+void cms_write(int reg, int data)
+{
+        // CMS chips have a DTACK so in theory
+        // we don't need to have delays.
+        if (reg & 0x100) {
+                outportb(sb_port + CMS_REG2, reg);
+                outportb(sb_port + CMS_DATA2, data);
+        } else {
+                outportb(sb_port + CMS_REG1, reg);
+                outportb(sb_port + CMS_DATA1, data);
+        }
+}
+
+void cms_writeloop(int chip)
+{
+
+        int y, i;
+        int result;
+        printf("CMS Write Loop Test for ");
+        if (!chip) {
+                printf("CMS Chip #1 (U15).\n");
+        } else {
+                printf("CMS Chip #2 (U14).\n");
+        }
+        printf("This test repeatedly writes to a register in the\n");
+        printf("selected CMS chip. You will not hear anything, but\n");
+        printf("you should see activity on the CS# (pin 2), WR# (pin 1),\n");
+        printf("A0 (pin 3), and DTACK# (pin 7) signals on the chip.\n");
+
+        printf("Press any key to end the test.\n");
+        do {
+                cms_write(CMS_AMPL0 | chip, 0);
+        } while (!kbhit());
+        getch();
+        clrscr();
+}
+
+void cms_sine(int channels)
+{
+
+        int chip = ((channels & 4)) ? 0x100 : 0;
+        printf("CMS Chip Test.\n");
+        printf("This test generates a sine wave using CMS chip #");
+        if (!chip) {
+                printf("1 (U15).\n");
+        } else {
+                printf("2 (U14).\n");
+        }
+        printf("You should hear sound from ");
+        if ((channels & 3) == 3) {
+                printf("both channels.\n");
+        } else if ((channels & 3) == 1) {
+                printf("the left channel.\n");
+        } else if ((channels & 3) == 2) {
+                printf("the right channel.\n");
+        }
+        printf("Press any key to end the test.\n");
+        // Set up SAA1099
+        cms_write(CMS_AMPL0 | chip, (channels & 1 ? 0xf : 0) |
+                                    (channels & 2 ? 0xf0 : 0 )); // Maximum amplitude
+        // Frequency input is 7.159090MHz.
+        // Note = 512 - (((7159090 / 512) * 2^octave) / frequency)
+        cms_write(CMS_FREQ0 | chip, 64); // 1000.991Hz
+        cms_write(CMS_OCT01 | chip, 5);  // 976-1950Hz octave
+        cms_write(CMS_EG0 | chip, 0);    // No envelope generator
+        cms_write(CMS_FE | chip, 0x1);   // Turn on this generator
+
+        cms_write(CMS_ENABLE | chip, 0x1);   // Enable the chip's output
+        getch();
+        cms_write(CMS_ENABLE | chip, 0x0);
+        clrscr();
+
+}
+
+void menu_cms1_loop()
+{
+        cms_writeloop(0);
+}
+
+void menu_cms2_loop()
+{
+        cms_writeloop(0x100);
+}
+
+void menu_cms1_sine()
+{
+        cms_sine(3);
+}
+
+void menu_cms1_left()
+{
+        cms_sine(1);
+}
+
+void menu_cms1_right()
+{
+        cms_sine(2);
+}
+
+void menu_cms2_sine()
+{
+        cms_sine(4 | 3);
+}
+
+void menu_cms2_left()
+{
+        cms_sine(4 | 1);
+}
+
+void menu_cms2_right()
+{
+        cms_sine(4 | 2);
+}
+
 
 // Menu definitions.
 const MENU_ITEM menu_dsptests[] = { {"DSP Address Test", menu_dsp_addr},
@@ -1211,6 +1342,15 @@ const MENU_ITEM menu_adlibtests[] = { {"Try to Detect Ad Lib", menu_ad_detect},
                                       {"Play Sine Wave", menu_ad_sine},
                                       {"Play Percussion Loop", menu_ad_loop},
                                       {0, 0} };
+const MENU_ITEM menu_cmstests[] = { {"Write loop (CMS 1)", menu_cms1_loop},
+                                    {"Write loop (CMS 2)", menu_cms2_loop},
+                                    {"(CMS 1) Generate sine wave", menu_cms1_sine},
+                                    {"(CMS 1) Generate sine wave (L)", menu_cms1_left},
+                                    {"(CMS 1) Generate sine wave (R)", menu_cms1_right},
+                                    {"(CMS 2) Generate sine wave", menu_cms2_sine},
+                                    {"(CMS 2) Generate sine wave (L)", menu_cms2_left},
+                                    {"(CMS 2) Generate sine wave (R)", menu_cms2_right},
+                                    {0, 0} };
 const MENU_ITEM menu_miditests[] = { {"MIDI Transmit Test", menu_midi_transmit},
                                      {"MIDI Loopback Test", menu_midi_loopback},
                                      {0, 0} };
@@ -1226,6 +1366,7 @@ const MENU_ITEM menu_ports[] = { {"Set SB base address", menu_set_sb_port},
 
 const MENU_ITEM menu_main[] = { {"DSP Tests", 0, (void *)menu_dsptests},
                                 {"Ad Lib/FM Synth Tests", 0, (void *)menu_adlibtests},
+                                {"CMS Chip Tests", 0, (void *)menu_cmstests},
                                 {"SBMIDI Port Tests", 0, (void *)menu_miditests},
                                 {"Joystick Port Tests", 0, (void *)menu_joytests},
                                 {"Change Port Settings", 0, (void *)menu_ports},
@@ -1254,7 +1395,7 @@ void display_menu (const MENU_ITEM *menu, char *banner, int top)
                 do {
                         ch = getch();
                         if (ch == 27) return;
-                } while (ch < '0' || ch > ('0' + i));
+                } while (ch < '0' || ch >= ('0' + i));
                 printf("\n");
                 i = ch - '0';
                 if (menu[i].submenu) {
