@@ -82,6 +82,27 @@ this test is not very useful for checking the YM3812's host interface.
 **Play Percussion Loop** is meant for checking digital writes to the YM3812
 registers. There are no read operations during this test.
 
+### CMS Chip Tests
+
+The CMS chips (optional) provide Game Blaster compatibility. If you have
+installed them, this part of SBDIAG can help you test it. Since the chips
+are write-only, SBDIAG has no way to confirm any tests; you will have to
+check pins using a logic probe or oscilloscope, or listen for the audio
+output.
+
+**Write Loop** tests simply write to a CMS register over and over again. You
+will not hear any sound but you can probe for activity on the following pins:
+
+* CS# (pin 2)
+* WR# (pin 1)
+* A0 (pin 3)
+* DTACK# (pin 7)
+
+**Sine Wave** tests generate a 1KHz sine wave through the left channel, right
+channel, or both channels at once. These tests write to the registers only
+twice, once before the test and once afterwards to shut off the sound, so this
+test is not very useful for use with a logic probe.
+
 ### SB-MIDI Tests
 The Snark Barker, just like older Sound Blaster cards, has a very basic SB-MIDI
 mode (not MPU-401 compatible). Not a whole lot of software uses it and the
