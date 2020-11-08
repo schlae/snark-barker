@@ -98,7 +98,7 @@ Initial state: low
 Assert this line high to prevent the DAC output voltage from reaching the
 speaker amplifier.
 
-Note that muting and unmuting the DAC output requires a process to preven
+Note that muting and unmuting the DAC output requires a process to prevent
 audible pops. See the speaker mute and unmute commands. This line is controlled
 only by those two routines (and the start routine that sets it low on boot). 
 
