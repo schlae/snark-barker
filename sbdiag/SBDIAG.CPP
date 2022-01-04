@@ -1277,7 +1277,8 @@ void cms_sine(int channels)
         cms_write(CMS_FREQ0 | chip, 64); // 1000.991Hz
         cms_write(CMS_OCT01 | chip, 5);  // 976-1950Hz octave
         cms_write(CMS_EG0 | chip, 0);    // No envelope generator
-        cms_write(CMS_FE | chip, 0x1);   // Turn on this generator
+        cms_write(CMS_FE | chip, 0x1);   // Turn on sine generator
+        cms_write(CMS_NE | chip, 0);     // Turn off noise generator
 
         cms_write(CMS_ENABLE | chip, 0x1);   // Enable the chip's output
         getch();
