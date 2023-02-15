@@ -199,7 +199,7 @@ int wait_write(void)
 {
         unsigned int i;
         for (i = 0; i < 1000; i++) {
-                if (!(inport(sb_port + DSP_WRITE_STATUS) & 0x80)) {
+                if (!(inportp(sb_port + DSP_WRITE_STATUS) & 0x80)) {
                         return 1;
                 }
                 delay(1);
